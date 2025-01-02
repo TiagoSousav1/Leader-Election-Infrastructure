@@ -44,19 +44,22 @@ def worker1():
     # printing process id
     print("ID of process running worker1: {}".format(os.getpid()))
     socket = MySocket()
+    socket.connect('localhost', 6000)
+    client, adress = socket.sock.accept()
     socket.mysend(b"Sending msg")
-    print(socket.sock)
     while(1):
-        pass
+        client.listen()
 
 def worker2():
     # printing process id
     print("ID of process running worker2: {}".format(os.getpid()))
     socket = MySocket()
+    socket.connect('localhost', 6001)
+    client, adress = socket.sock.accept()
     socket.myreceive()
     print(socket.sock)
     while(1):
-        pass
+        client, adress = socket.sock.accept()
 
 if __name__ == "__main__":
     # printing main program process id
