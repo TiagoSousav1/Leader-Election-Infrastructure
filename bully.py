@@ -2,6 +2,8 @@ import socket
 import multiprocessing
 import time
 
+#Setting up github on a dif computer validation check
+
 def node_process(node_id, num_nodes, port):
     def send_message(target_port, message):
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
