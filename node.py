@@ -12,6 +12,7 @@ class Node(Process):
         self.node_socket = 0        # The node's socket
         self.host_ip = socket.gethostbyname(socket.gethostname()) # The machine's IP, which will be the IP for all nodes in this case (might trigger anti virus)
         self.buffer_size = 2048     # Max msg size
+        self.encoding_format = 'utf-8'
 
         # Leader Election Logic attributes
         self.leader = 0             # The leader this node has acknowledged
@@ -33,6 +34,7 @@ class Node(Process):
     def receiving_msgs_thread(self):
         while True:
             data, addr = self.node_socket.recvfrom(self.buffer_size)
+            data = data.decode(encoding=self.encoding_format)
             print(f'Node {self.node_id} Received: {data}')
 
     def start_election(self):
@@ -54,10 +56,12 @@ class Node(Process):
         time.sleep(1)
 
         while running:
-            if self.node_id == 1:
-                self.send_msg(0, b'Hello World!')
-            else:
-                self.send_msg(1, b'Hello World!')
+            for neighbor in self.neighbors:
+                msg = f'Hello from Neighbor {self.node_id}!'
+                msg_in_bytes = msg.encode(encoding=self.encoding_format)
+
+                self.send_msg(neighbor, msg_in_bytes)
+
             time.sleep(10)
             pass
 

@@ -2,14 +2,22 @@ import concurrent.futures
 import multiprocessing
 import node
 
+
 if __name__=='__main__':
-    nodes_args = [[0, None], [1, None]]
-    
-    p1 = multiprocessing.Process(target=node.main, args=nodes_args[0])
-    p2 = multiprocessing.Process(target=node.main, args=nodes_args[1])
+    graph = { 
+                0 : [1, 3, 4],
+                1 : [2, 3],
+                2 : [],
+                3 : [1, 2],
+                4 : [],
+                5 : [1, 2],
+            } 
+    proccesses = []
 
-    p1.start()
-    p2.start()
+    for node_neighbour in graph:
+        p = multiprocessing.Process(target=node.main, args=[node_neighbour, graph[node_neighbour]])
+        p.start()
+        proccesses.append(p)
 
-    p1.join()
-    p2.join()
+    for p in proccesses:
+        p.join()
