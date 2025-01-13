@@ -33,7 +33,7 @@ class Node(Process):
 
     def receiving_msgs_thread(self):
         while True:
-            data, addr = self.node_socket.recvfrom(self.buffer_size)
+            data, addr = self.node_socket.recv(self.buffer_size)
             data = data.decode(encoding=self.encoding_format)
             print(f'Node {self.node_id} Received: {data}')
 
