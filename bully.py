@@ -27,6 +27,7 @@ def node_process(node_id, num_nodes, port):
             leader = -1
             for target_id in range(node_id + 1, num_nodes):
                 send_message(5000 + target_id, f"ELECTION {node_id}")
+                
             time.sleep(2)  # Wait for responses
             if leader == -1:  # If no higher node responded, declare self as leader
                 leader = node_id
