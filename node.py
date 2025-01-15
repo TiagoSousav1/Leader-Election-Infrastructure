@@ -2,7 +2,7 @@ import socket
 from multiprocessing import Process
 import threading
 import time
-import timeit
+from timeit import default_timer as timer
 
 class Node(Process):
     def __init__(self, node_id, neighbors, args):
@@ -17,11 +17,11 @@ class Node(Process):
         self.host_ip = socket.gethostbyname(socket.gethostname()) # The machine's IP, which will be the IP for all nodes in this case (might trigger anti virus)
         self.buffer_size = 512     # Max msg size
         self.encoding_format = 'utf-8'
+        self.neighbors = neighbors  # THe node's accessible neighbors
 
         # Bully Leader Election Logic attributes
         self.leader = -1             # The leader this node has acknowledged
         self.in_election = 0        # Whether an election is occuring or not
-        self.neighbors = neighbors  # THe node's accessible neighbors
         self.halt = False
 
         # Invitaiton Leader Election Logic attributes
@@ -155,7 +155,7 @@ class Node(Process):
                 if self.send_msg(target_id, f"ARE-YOU-THERE {self.node_id}"):
                     self.msgs_sent += 1
 
-        time.sleep(5)  # Wait for responses
+        time.sleep(2)  # Wait for responses
 
         if self.halt:
             print(f"[NODE {self.node_id}] Found a more suitable leader")
@@ -197,13 +197,13 @@ class Node(Process):
 
             if self.args[1] == "BULLY":
                 if not self.crashed:
-                    start = timeit.timeit()
+                    start = timer()
                     self.start_election_bully()
-                    end = timeit.timeit()
+                    end = timer()
                     time.sleep(5)
                     print(f"[NODE {self.node_id}] Acknowledged leader {self.leader}")
                     print(f"[NODE {self.node_id}] Sent {self.msgs_sent} messages")
-                    print(f"[NODE {self.node_id}] Took {end-start:.6f} seconds to elect a leader")
+                    print(f"[NODE {self.node_id}] Took {end-start:.8f} seconds to elect a leader")
 
                 if self.args[2] == "CRASH":
                     
@@ -214,13 +214,13 @@ class Node(Process):
 
             elif self.args[1] == "PAPER":
                 if not self.crashed:
-                    start = timeit.timeit()
+                    start = timer()
                     self.start_invitation_election()
-                    end = timeit.timeit()
+                    end = timer()
                     time.sleep(5)
                     print(f"[NODE {self.node_id}] Is Leader: {self.is_leader}")
                     print(f"[NODE {self.node_id}] Sent {self.msgs_sent} messages")
-                    print(f"[NODE {self.node_id}] Took {end-start:.6f} seconds to elect a leader")
+                    print(f"[NODE {self.node_id}] Took {end-start:.8f} seconds to elect a leader")
 
                 if self.args[2] == "CRASH":
                     
